@@ -7,8 +7,9 @@ import { BScroll } from './lib';
 @Directive({ selector: '[betterScroll]', exportAs: 'betterScroll' })
 export class BetterScrollDirective implements AfterViewInit {
     @Output() betterScroll: EventEmitter<any> = new EventEmitter();
-    @Input() options: any = {};
-
+    options: any = {
+        probeType: 2
+    };
     private _scroll: any;
     constructor(public ele: ElementRef) { }
 
