@@ -38,7 +38,7 @@
 </iwe7-slide-full>
 ```
 
-···ts
+```ts
 list: any[] = [{
   image: 'https://ustbhuangyi.github.io/better-scroll/static/img/winter.74aecef.jpeg'
 }, {
