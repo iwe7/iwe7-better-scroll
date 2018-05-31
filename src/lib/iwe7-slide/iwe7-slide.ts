@@ -1,4 +1,4 @@
-import { HostBinding, ViewChildren, ViewChild, Input, QueryList, AfterViewInit, ViewEncapsulation, Injectable, Renderer2 } from '@angular/core';
+import { HostBinding, ViewChildren, ViewChild, Input, QueryList, AfterViewInit, ViewEncapsulation, Injectable, Renderer2, AfterContentInit } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { BScroll } from '../lib';
@@ -13,21 +13,33 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
         '[class.slide]': 'true'
     }
 })
-export class Iwe7SlideComponent implements OnInit, AfterViewInit {
+export class Iwe7SlideComponent implements OnInit, AfterViewInit, AfterContentInit {
     private slide: any;
     private timer: any;
     currentPageIndex: number;
 
-    @Input() loop: boolean = true;
+    _loop: boolean = true;
+    @Input()
+    set loop(val: any) {
+        this._loop = coerceBooleanProperty(val);
+    }
+    get loop() {
+        return this._loop;
+    }
     @Input() threshold: number = 0.3;
     @Input() speed: number = 400;
     @Input() click: boolean = true;
-    @Input() autoPlay: boolean = true;
+    _autoPlay: boolean = true;
+    @Input()
+    set autoPlay(val: any) {
+        this._autoPlay = coerceBooleanProperty(val);
+    }
+    get autoPlay() {
+        return this._autoPlay;
+    }
     @Input() interval: number = 4000;
 
-    @HostBinding('style.height')
     @Input() height: string = 'auto';
-
     @ViewChild('group') group: ElementRef;
     @HostBinding('class.scroll-x')
     _scrollX: boolean = true;
@@ -64,6 +76,10 @@ export class Iwe7SlideComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
+
+    }
+
+    ngAfterContentInit() {
         this.count = this.children.length;
         clearTimeout(this.timer);
         this.currentPageIndex = 0;
@@ -75,7 +91,7 @@ export class Iwe7SlideComponent implements OnInit, AfterViewInit {
             scrollY: this._scrollY,
             momentum: false,
             snap: {
-                loop: this.loop,
+                loop: this._loop,
                 threshold: this.threshold,
                 speed: this.speed
             },
@@ -112,7 +128,6 @@ export class Iwe7SlideComponent implements OnInit, AfterViewInit {
             this.update('clientHeight', 'height');
         }
     }
-
 
     private update(name: string, val: string) {
         const slideWidth = this.ele.nativeElement[name];

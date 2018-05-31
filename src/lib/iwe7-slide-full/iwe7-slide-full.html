@@ -1,0 +1,16 @@
+<iwe7-slide loop="false" autoPlay="false">
+  <div *ngFor="let item of data;index as i;">
+    <div class="full-page-img-wrapper" [style.background-image]="'url('+item.image+')'">
+      <ng-container *ngIf="i === data.length-1">
+        <ng-container *ngTemplateOutlet="tpl"></ng-container>
+      </ng-container>
+    </div>
+  </div>
+</iwe7-slide>
+
+
+<ng-template #tpl>
+  <div class="button-wrapper">
+    <ng-content></ng-content>
+  </div>
+</ng-template>
