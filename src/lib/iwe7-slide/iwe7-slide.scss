@@ -2,12 +2,9 @@ $color-light-grey-s: #ccc;
 $color-white: #fff;
 iwe7-slide {
   min-height: 1px;
-  overflow: hidden;
   display: block;
+  overflow: hidden;
   position: relative;
-  .slide {
-    min-height: 1px;
-  }
   .slide-group {
     position: relative;
     overflow: hidden;
@@ -33,23 +30,56 @@ iwe7-slide {
   }
   .dots {
     position: absolute;
-    right: 0;
-    left: 0;
-    bottom: 12px;
-    transform: translateZ(1px);
-    text-align: center;
-    font-size: 0;
+    justify-content: center;
+    align-items: center;
     .dot {
       display: inline-block;
-      margin: 0 4px;
       width: 8px;
       height: 8px;
       border-radius: 50%;
       background: $color-light-grey-s;
       &.active {
-        width: 20px;
         border-radius: 5px;
         background: $color-white;
+      }
+    }
+  }
+}
+
+.slide {
+  &.scroll-x {
+    .dots {
+      right: 0;
+      left: 0;
+      bottom: 12px;
+      transform: translateZ(1px);
+      text-align: center;
+      font-size: 0;
+      display: flex;
+      flex-direction: row;
+      .dot {
+        margin: 0 4px;
+        &.active {
+          width: 20px;
+        }
+      }
+    }
+  }
+  &.scroll-y {
+    .dots {
+      top: 0px;
+      bottom: 0px;
+      right: 12px;
+      transform: translateZ(1px);
+      text-align: center;
+      font-size: 0;
+      display: flex;
+      flex-direction: column;
+      .dot {
+        margin: 4px 0px;
+        &.active {
+          height: 20px;
+        }
       }
     }
   }

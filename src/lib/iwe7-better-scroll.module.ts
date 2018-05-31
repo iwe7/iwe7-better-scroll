@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Iwe7SlideComponent } from './iwe7-slide/iwe7-slide';
-
-
 import { BetterScrollDirective } from './better-scroll';
 import { NgModule } from '@angular/core';
 

@@ -3,7 +3,7 @@ import { ElementRef } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { BScroll } from '../lib';
 import * as _ from 'lodash';
-
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 @Component({
     selector: 'iwe7-slide',
     templateUrl: 'iwe7-slide.html',
@@ -25,7 +25,25 @@ export class Iwe7SlideComponent implements OnInit, AfterViewInit {
     @Input() autoPlay: boolean = true;
     @Input() interval: number = 4000;
 
+    @HostBinding('style.height')
+    @Input() height: string = 'auto';
+
     @ViewChild('group') group: ElementRef;
+    @HostBinding('class.scroll-x')
+    _scrollX: boolean = true;
+    @HostBinding('class.scroll-y')
+    _scrollY: boolean = false;
+    @Input()
+    set scrollX(val: any) {
+        this._scrollX = coerceBooleanProperty(val);
+        this._scrollY = !this._scrollX;
+    }
+
+    @Input()
+    set scrollY(val: any) {
+        this._scrollY = coerceBooleanProperty(val);
+        this._scrollX = !this._scrollY;
+    }
 
     count: number = 0;
 
@@ -41,20 +59,6 @@ export class Iwe7SlideComponent implements OnInit, AfterViewInit {
         public render: Renderer2
     ) { }
 
-    updateWidth() {
-        const slideWidth = this.group.nativeElement.clientWidth;
-        for (const key in this.children) {
-            const item = this.children[key];
-            if (item.classList) {
-                this.render.addClass(item, 'slide-item');
-            }
-            _.set(item, 'style.width', slideWidth + 'px');
-        }
-        this.render.setStyle(this.group.nativeElement, 'width', slideWidth * this.children.length + 'px');
-        this.render.setStyle(this.group.nativeElement, 'opacity', '1');
-        this.updateDots();
-    }
-
     get children() {
         return this.group.nativeElement.children;
     }
@@ -67,8 +71,8 @@ export class Iwe7SlideComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         const opt: any = {
-            scrollX: true,
-            scrollY: false,
+            scrollX: this._scrollX,
+            scrollY: this._scrollY,
             momentum: false,
             snap: {
                 loop: this.loop,
@@ -97,20 +101,48 @@ export class Iwe7SlideComponent implements OnInit, AfterViewInit {
             this._play();
         }
         setTimeout(() => {
-            this.updateWidth();
+            this.updateStyle();
         }, 20);
     }
 
+    updateStyle() {
+        if (this._scrollX) {
+            this.update('clientWidth', 'width');
+        } else {
+            this.update('clientHeight', 'height');
+        }
+    }
+
+
+    private update(name: string, val: string) {
+        const slideWidth = this.ele.nativeElement[name];
+        for (const key in this.children) {
+            const item = this.children[key];
+            if (item.classList) {
+                this.render.addClass(item, 'slide-item');
+            }
+            _.set(item, 'style.' + val, slideWidth + 'px');
+        }
+        this.render.setStyle(this.group.nativeElement, val, slideWidth * this.children.length + 'px');
+        this.render.setStyle(this.group.nativeElement, 'opacity', '1');
+        this.updateDots();
+    }
+
     _onScrollEnd() {
-        const pageIndex = this.slide.getCurrentPage().pageX;
-        this.currentPageIndex = pageIndex;
+        if (this._scrollX) {
+            const pageIndex = this.slide.getCurrentPage().pageX;
+            this.currentPageIndex = pageIndex;
+        } else {
+            const pageIndex = this.slide.getCurrentPage().pageY;
+            this.currentPageIndex = pageIndex;
+        }
         if (this.autoPlay) {
             this._play();
         }
     }
 
     refresh() {
-        this.updateWidth();
+        this.updateStyle();
         this.slide.refresh();
     }
 
