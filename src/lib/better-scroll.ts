@@ -3,21 +3,28 @@ import { Subject } from 'rxjs';
 import { ElementRef, AfterViewInit, EventEmitter, Input, Output } from '@angular/core';
 import { Directive } from '@angular/core';
 import { BScroll } from './lib';
-
+import { Iwe7CoreComponent } from 'iwe7-core';
 @Directive({ selector: '[betterScroll]', exportAs: 'betterScroll' })
-export class BetterScrollDirective implements AfterViewInit {
+export class BetterScrollDirective extends Iwe7CoreComponent {
     @Output() betterScroll: EventEmitter<any> = new EventEmitter();
     options: any = {
-        probeType: 2
+        probeType: 2,
+        click: true,
+        preventDefault: true
     };
-    private _scroll: any;
-    constructor(public ele: ElementRef) { }
+    _scroll: any;
 
-    ngAfterViewInit() {
-        setTimeout(() => {
+    get scrollInstance() {
+        return this.getCyc('betterScrollInited');
+    }
+
+    constructor(public ele: ElementRef) {
+        super();
+        this.getCyc('ngAfterViewInit').subscribe(res => {
             this._scroll = new BScroll(this.ele.nativeElement, this.options);
             this.betterScroll.emit(this._scroll);
-        }, 0);
+            this.setCyc('betterScrollInited', this._scroll);
+        });
     }
 
     pullingDown(): Observable<Function> {
