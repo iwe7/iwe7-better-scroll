@@ -3,8 +3,9 @@ $color-white: #fff;
 iwe7-slide {
   min-height: 1px;
   display: block;
-  overflow: hidden;
   position: relative;
+  
+  overflow: hidden;
   .slide-group {
     position: relative;
     overflow: hidden;
