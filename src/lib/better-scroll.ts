@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { Subject } from 'rxjs';
-import { ElementRef, AfterViewInit, EventEmitter, Input, Output } from '@angular/core';
+import { ElementRef, AfterViewInit, EventEmitter, Input, Output, Injector } from '@angular/core';
 import { Directive } from '@angular/core';
 import { BScroll } from './lib';
 import { Iwe7CoreComponent } from 'iwe7-core';
@@ -18,8 +18,8 @@ export class BetterScrollDirective extends Iwe7CoreComponent {
         return this.getCyc('betterScrollInited');
     }
 
-    constructor(public ele: ElementRef) {
-        super();
+    constructor(public ele: ElementRef, public injector: Injector) {
+        super(injector);
         this.getCyc('ngAfterViewInit').subscribe(res => {
             this._scroll = new BScroll(this.ele.nativeElement, this.options);
             this.betterScroll.emit(this._scroll);
