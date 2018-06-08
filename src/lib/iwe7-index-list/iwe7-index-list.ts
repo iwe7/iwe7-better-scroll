@@ -1,4 +1,3 @@
-import { BetterScrollDirective } from './../better-scroll';
 import { Component, OnInit, ViewEncapsulation, ContentChildren, QueryList, AfterContentInit, ViewChild } from '@angular/core';
 import { Iwe7IndexAnchorDirective } from './iwe7-index-anchor';
 const TITLE_HEIGHT = 50;
@@ -14,7 +13,7 @@ import { map, tap, debounceTime, throttleTime } from 'rxjs/operators';
 
 export class Iwe7IndexListComponent implements OnInit {
     @ContentChildren(Iwe7IndexAnchorDirective) _anchors: QueryList<Iwe7IndexAnchorDirective>;
-    @ViewChild(BetterScrollDirective) better: BetterScrollDirective;
+    // @ViewChild(BetterScrollDirective) better: BetterScrollDirective;
     activeAnchor: Iwe7IndexAnchorDirective;
 
     _currentIndex: number = 0;
