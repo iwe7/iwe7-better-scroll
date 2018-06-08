@@ -56,6 +56,7 @@ export class BetterScrollEventManager extends DomEventsPlugin {
             } else {
                 newElement.classList.add('better-scroll-container');
                 if (eventName === 'scrollX') {
+                    // 简单的scrollX
                     setTimeout(() => {
                         let width = 0;
                         for (let i = 0; i < element.childNodes.length; i++) {

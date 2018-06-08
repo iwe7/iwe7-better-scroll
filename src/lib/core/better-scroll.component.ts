@@ -13,7 +13,6 @@ import * as _ from 'lodash';
 })
 export class BetterScrollDirective extends BaseWithIcss {
     @Output() betterScroll: EventEmitter<any> = new EventEmitter();
-
     @Input() name: string;
     @Input() options: BsOption = {
         click: false,
@@ -196,25 +195,41 @@ export class BetterScrollDirective extends BaseWithIcss {
         return ele.children;
     }
 
+    // 更新
     updateStyle(ele: HTMLElement) {
         if (this.options.scrollX) {
-            this.updateChildren(ele, 'clientWidth', 'width');
+            const slideWidth = ele['clientWidth'];
+            this.updateChildrenStyle(slideWidth + 'px', 'width');
+            this.updateContainerStyle('clientWidth', 'width');
         } else {
-            this.updateChildren(ele, 'clientHeight', 'height');
+            const clientHeight = ele['clientHeight'];
+            this.updateChildrenStyle(clientHeight + 'px', 'height');
+            this.updateContainerStyle('clientHeight', 'height');
         }
     }
 
-    private updateChildren(ele: HTMLElement, name: string, val: string) {
+    updateContainerStyle(name: string, val: string) {
+        const ele = this.ele.nativeElement;
         const children = ele.children;
-        const slideWidth = ele[name];
+        let total = 0;
+        for (const key in children) {
+            const item: HTMLElement = children[key] as HTMLElement;
+            const size = item[name];
+            total += size;
+        }
+        _.set(this.ele.nativeElement, 'style.' + val, total + 'px');
+    }
+
+    updateChildrenStyle(width: string, val: string) {
+        const ele = this.ele.nativeElement;
+        const children = ele.children;
         for (const key in children) {
             const item: HTMLElement = children[key] as HTMLElement;
             if (item.classList) {
                 this.render.addClass(item, 'slide-item');
             }
-            _.set(item, 'style.' + val, slideWidth + 'px');
+            _.set(item, 'style.' + val, width);
         }
-        _.set(this.ele.nativeElement, 'style.' + val, slideWidth * children.length + 'px');
     }
 }
 
