@@ -78,27 +78,19 @@ export class BetterScrollCore implements OnDestroy {
         this.destroy();
         this.scroll = null;
     }
-
     autoPlay(options: any) {
         this.options = {
             ...this.options,
             ...options
         };
-        if (this.options.autoPlay) { }
-
-        this.on('scrollEnd', () => {
-            this.onScrollEnd();
-        });
-        this.on('touchEnd', () => {
-            if (this.options.autoPlay) {
-                this.play();
-            }
-        });
-        this.on('beforeScrollStart', () => {
-            if (this.options.autoPlay) {
-                clearTimeout(this.timer);
-            }
-        });
+        const scrollEnd: any = () => { 
+            
+        };
+        const touchEnd: any = () => { };
+        const beforeScrollStart: any = () => { };
+        this.on('scrollEnd', scrollEnd);
+        this.on('touchEnd', touchEnd);
+        this.on('beforeScrollStart', beforeScrollStart);
     }
 
     play() {
@@ -134,7 +126,7 @@ export class BetterScrollCore implements OnDestroy {
         }
     }
 
-    update(ele: HTMLElement, name: string, val: string) {
+    private update(ele: HTMLElement, name: string, val: string) {
         const children = ele.children;
         const slideWidth = ele[name];
         for (const key in children) {
