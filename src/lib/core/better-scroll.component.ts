@@ -2,17 +2,18 @@ import { BaseWithIcss } from 'iwe7-base';
 import { Observable } from 'rxjs';
 import { BetterManagerService } from './better-scroll.manager';
 import { BetterScrollCore } from './core';
-import { ElementRef, EventEmitter, Output, Injector, Input, Optional, SkipSelf } from '@angular/core';
+import { ElementRef, EventEmitter, Output, Injector, Input } from '@angular/core';
 import { Directive } from '@angular/core';
-import { SlideOption, ScrollBarOption, PullUpOption, WheelOption } from 'better-scroll';
+import { SlideOption, ScrollBarOption, PullUpOption, WheelOption, BsOption } from 'better-scroll';
 import { coerceBooleanProperty, coerceNumberProperty } from '@angular/cdk/coercion';
+import * as _ from 'lodash';
 @Directive({
     selector: '[betterScroll]',
     exportAs: 'betterScroll'
 })
 export class BetterScrollDirective extends BaseWithIcss {
     @Output() betterScroll: EventEmitter<any> = new EventEmitter();
-    @Input() options: any = {
+    @Input() options: BsOption = {
         click: false,
         pullDownRefresh: false,
         pullUpLoad: false,
@@ -32,7 +33,13 @@ export class BetterScrollDirective extends BaseWithIcss {
         scrollY: true,
         startX: 0,
         startY: 0
-    };
+    } as any;
+
+    get parent() {
+        const element: HTMLElement = this.ele.nativeElement;
+        return element.parentElement;
+    }
+
     @Input() set startY(val: any) {
         this.options.startY = coerceNumberProperty(val);
     }
@@ -43,9 +50,15 @@ export class BetterScrollDirective extends BaseWithIcss {
     @Input() set scrollX(val: any) {
         this.options.scrollX = coerceBooleanProperty(val);
     }
+    get scrollX() {
+        return this.options.scrollX;
+    }
 
     @Input() set scrollY(val: any) {
         this.options.scrollY = coerceBooleanProperty(val);
+    }
+    get scrollY() {
+        return this.options.scrollY;
     }
 
     @Input() set freeScroll(val: any) {
@@ -60,7 +73,7 @@ export class BetterScrollDirective extends BaseWithIcss {
         this.options.click = coerceBooleanProperty(val);
     }
 
-    @Input() set tap(val: string) {
+    @Input() set tap(val: any) {
         this.options.tap = val;
     }
 
@@ -103,9 +116,7 @@ export class BetterScrollDirective extends BaseWithIcss {
             ...{
                 loop: true,
                 threshold: 0.3,
-                speed: 400,
-                stepX: 100,
-                stepY: 100
+                speed: 400
             },
             ...val
         };
@@ -149,14 +160,20 @@ export class BetterScrollDirective extends BaseWithIcss {
         super(injector);
         this.runOutsideAngular(() => {
             this.getCyc('ngAfterViewInit').subscribe(res => {
-                if (this.betterManagerService.has(this.ele.nativeElement)) {
+                if (this.betterManagerService.has(this.parent)) {
                     setTimeout(() => {
                         this._scroll.refresh();
                     }, 0);
                 } else {
-                    this.betterManagerService.createBetterScrollCore(this.ele.nativeElement, this.options);
+                    this.betterManagerService.createBetterScrollCore(this.parent, this.options);
                 }
-                this._scroll = this.betterManagerService.get(this.ele.nativeElement);
+                if (this.scrollX) {
+                    this.parent.classList.add('scroll-x');
+                }
+                if (this.scrollY) {
+                    this.parent.classList.add('scroll-y');
+                }
+                this._scroll = this.betterManagerService.get(this.parent);
                 this.betterScroll.emit(this);
                 this.setCyc('betterScrollInited', this._scroll);
             });
@@ -171,6 +188,27 @@ export class BetterScrollDirective extends BaseWithIcss {
     get children() {
         const ele: HTMLElement = this.ele.nativeElement;
         return ele.children;
+    }
+
+    updateStyle(ele: HTMLElement) {
+        if (this.options.scrollX) {
+            this.updateChildren(ele, 'clientWidth', 'width');
+        } else {
+            this.updateChildren(ele, 'clientHeight', 'height');
+        }
+    }
+
+    private updateChildren(ele: HTMLElement, name: string, val: string) {
+        const children = ele.children;
+        const slideWidth = ele[name];
+        for (const key in children) {
+            const item: HTMLElement = children[key] as HTMLElement;
+            if (item.classList) {
+                this.render.addClass(item, 'slide-item');
+            }
+            _.set(item, 'style.' + val, slideWidth + 'px');
+        }
+        _.set(this.ele.nativeElement, 'style.' + val, slideWidth * children.length + 'px');
     }
 }
 

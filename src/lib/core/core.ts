@@ -83,14 +83,19 @@ export class BetterScrollCore implements OnDestroy {
             ...this.options,
             ...options
         };
-        const scrollEnd: any = () => { 
-            
+        const touchEnd: any = () => {
+            if (options.autoPlay) {
+                this.play();
+            }
         };
-        const touchEnd: any = () => { };
-        const beforeScrollStart: any = () => { };
-        this.on('scrollEnd', scrollEnd);
+        const beforeScrollStart: any = () => {
+            if (options.autoPlay) {
+                clearTimeout(this.timer);
+            }
+        };
         this.on('touchEnd', touchEnd);
         this.on('beforeScrollStart', beforeScrollStart);
+        this.play();
     }
 
     play() {
@@ -100,46 +105,12 @@ export class BetterScrollCore implements OnDestroy {
         }, this.options.interval || 4000);
     }
 
-    currentPageIndex: number = 0;
-
-    onScrollEnd() {
-        if (this.options.scrollX) {
-            const pageIndex = this.getCurrentPage().pageX;
-            this.currentPageIndex = pageIndex;
-        } else {
-            const pageIndex = this.getCurrentPage().pageY;
-            this.currentPageIndex = pageIndex;
-        }
-        if (this.options.autoPlay) {
-            this.play();
-        }
+    getPageY() {
+        return this.getCurrentPage().pageY;
     }
 
-    updateStyle(ele: HTMLElement) {
-        if (this.options.scrollX) {
-            this.update(ele, 'clientWidth', 'width');
-        } else {
-            this.update(ele, 'clientHeight', 'height');
-        }
-        if (this.options.autoPlay) {
-            this.play();
-        }
-    }
-
-    private update(ele: HTMLElement, name: string, val: string) {
-        const children = ele.children;
-        const slideWidth = ele[name];
-        for (const key in children) {
-            const item: HTMLElement = children[key] as HTMLElement;
-            if (item.classList) {
-                item.classList.add('slide-item');
-            }
-            item.style[val] = slideWidth + 'px';
-        }
-    }
-
-    getChildren(ele: HTMLElement) {
-        return ele.children;
+    getPageX() {
+        return this.getCurrentPage().pageX;
     }
 }
 
