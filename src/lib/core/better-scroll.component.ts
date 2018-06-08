@@ -150,12 +150,13 @@ export class BetterScrollDirective extends BaseWithIcss {
         this.runOutsideAngular(() => {
             this.getCyc('ngAfterViewInit').subscribe(res => {
                 if (this.betterManagerService.has(this.ele.nativeElement)) {
-                    this._scroll = this.betterManagerService.get(this.ele.nativeElement);
-                    this._scroll.refresh();
+                    setTimeout(() => {
+                        this._scroll.refresh();
+                    }, 0);
                 } else {
-                    this._scroll.init(this.ele.nativeElement, this.options);
-                    this.betterManagerService.register(this.ele.nativeElement, this._scroll);
+                    this.betterManagerService.createBetterScrollCore(this.ele.nativeElement, this.options);
                 }
+                this._scroll = this.betterManagerService.get(this.ele.nativeElement);
                 this.betterScroll.emit(this);
                 this.setCyc('betterScrollInited', this._scroll);
             });
@@ -166,4 +167,10 @@ export class BetterScrollDirective extends BaseWithIcss {
         this.betterManagerService.deRegister(this.ele.nativeElement);
         super.ngOnDestroy();
     }
+
+    get children() {
+        const ele: HTMLElement = this.ele.nativeElement;
+        return ele.children;
+    }
 }
+
