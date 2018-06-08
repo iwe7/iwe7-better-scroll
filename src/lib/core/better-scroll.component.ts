@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { BetterManagerService } from './better-scroll.manager';
 import { BetterScrollCore } from './core';
 import { ElementRef, EventEmitter, Output, Injector, Input, Optional, SkipSelf } from '@angular/core';
@@ -21,7 +22,7 @@ export class BetterScrollDirective extends Iwe7CoreComponent {
         }
     };
 
-    get scrollInstance() {
+    get scrollInstance(): Observable<any> {
         return this.getCyc('betterScrollInited');
     }
     constructor(
