@@ -13,6 +13,8 @@ import * as _ from 'lodash';
 })
 export class BetterScrollDirective extends BaseWithIcss {
     @Output() betterScroll: EventEmitter<any> = new EventEmitter();
+
+    @Input() name: string;
     @Input() options: BsOption = {
         click: false,
         pullDownRefresh: false,
@@ -160,24 +162,28 @@ export class BetterScrollDirective extends BaseWithIcss {
         super(injector);
         this.runOutsideAngular(() => {
             this.getCyc('ngAfterViewInit').subscribe(res => {
-                if (this.betterManagerService.has(this.parent)) {
-                    setTimeout(() => {
-                        this._scroll.refresh();
-                    }, 0);
-                } else {
-                    this.betterManagerService.createBetterScrollCore(this.parent, this.options);
-                }
+                this.initBetterScroll();
                 if (this.scrollX) {
                     this.parent.classList.add('scroll-x');
                 }
                 if (this.scrollY) {
                     this.parent.classList.add('scroll-y');
                 }
-                this._scroll = this.betterManagerService.get(this.parent);
                 this.betterScroll.emit(this);
                 this.setCyc('betterScrollInited', this._scroll);
             });
         });
+    }
+
+    initBetterScroll() {
+        if (this.betterManagerService.has(this.parent)) {
+            setTimeout(() => {
+                this._scroll.refresh();
+            }, 0);
+        } else {
+            this.betterManagerService.createBetterScrollCore(this.parent, this.options, this.name);
+        }
+        this._scroll = this.betterManagerService.get(this.name || this.parent);
     }
 
     ngOnDestroy() {
