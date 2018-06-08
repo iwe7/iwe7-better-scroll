@@ -1,17 +1,16 @@
+import { BaseWithIcss } from 'iwe7-base';
 import { Observable } from 'rxjs';
 import { BetterManagerService } from './better-scroll.manager';
 import { BetterScrollCore } from './core';
 import { ElementRef, EventEmitter, Output, Injector, Input, Optional, SkipSelf } from '@angular/core';
 import { Directive } from '@angular/core';
-import { Iwe7CoreComponent } from 'iwe7-core';
 import { SlideOption, ScrollBarOption, PullUpOption, WheelOption } from 'better-scroll';
 import { coerceBooleanProperty, coerceNumberProperty } from '@angular/cdk/coercion';
 @Directive({
     selector: '[betterScroll]',
-    exportAs: 'betterScroll',
-    providers: [BetterScrollCore]
+    exportAs: 'betterScroll'
 })
-export class BetterScrollDirective extends Iwe7CoreComponent {
+export class BetterScrollDirective extends BaseWithIcss {
     @Output() betterScroll: EventEmitter<any> = new EventEmitter();
     @Input() options: any = {
         click: false,
@@ -140,17 +139,14 @@ export class BetterScrollDirective extends Iwe7CoreComponent {
     get scrollInstance(): Observable<any> {
         return this.getCyc('betterScrollInited');
     }
+
+    _scroll: BetterScrollCore;
     constructor(
         public ele: ElementRef,
         injector: Injector,
-        @Optional()
-        public _scroll: BetterScrollCore,
-        @SkipSelf()
-        @Optional()
-        public parent: BetterScrollCore,
         public betterManagerService: BetterManagerService
     ) {
-        super(injector, 'better-scroll');
+        super(injector);
         this.runOutsideAngular(() => {
             this.getCyc('ngAfterViewInit').subscribe(res => {
                 if (this.betterManagerService.has(this.ele.nativeElement)) {
