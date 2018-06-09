@@ -107,7 +107,13 @@ export class BetterScrollDirective extends BaseWithIcss {
 
     @Input() set wheel(val: WheelOption) {
         this.options.wheel = {
-            ...{ selectedIndex: 0, rotate: 25, adjustTime: 400 },
+            ...{
+                selectedIndex: 0,
+                rotate: 25,
+                adjustTime: 400,
+                wheelWrapperClass: 'wheel-scroll',
+                wheelItemClass: 'wheel-item'
+            },
             ...val
         };
     }
