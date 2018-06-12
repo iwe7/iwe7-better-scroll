@@ -113,4 +113,3 @@ export class BetterScrollCore implements OnDestroy {
         return this.getCurrentPage().pageX;
     }
 }
-
