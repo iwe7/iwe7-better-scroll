@@ -1,6 +1,6 @@
 {
   "name": "iwe7-better-scroll",
-  "version": "0.4.6",
+  "version": "0.5.7",
   "peerDependencies": {
     "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
     "@angular/core": "^6.0.0-rc.0 || ^6.0.0"

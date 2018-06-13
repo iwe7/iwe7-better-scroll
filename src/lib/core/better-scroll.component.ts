@@ -202,28 +202,34 @@ export class BetterScrollDirective extends BaseWithIcss {
     }
 
     // 更新
-    updateStyle(ele: HTMLElement) {
+    updateStyle(ele: HTMLElement, debug: boolean = false) {
+        const rect = ele.getBoundingClientRect();
+        if (debug) {
+            console.log(rect);
+        }
         if (this.options.scrollX) {
-            const slideWidth = ele['clientWidth'];
-            this.updateChildrenStyle(slideWidth + 'px', 'width');
-            this.updateContainerStyle('clientWidth', 'width');
+            this.updateChildrenStyle(rect.width + 'px', 'width');
+            this.updateContainerStyle('width');
         } else {
-            const clientHeight = ele['clientHeight'];
-            this.updateChildrenStyle(clientHeight + 'px', 'height');
-            this.updateContainerStyle('clientHeight', 'height');
+            this.updateChildrenStyle(rect.height + 'px', 'height');
+            this.updateContainerStyle('height');
         }
     }
 
-    updateContainerStyle(name: string, val: string) {
-        const ele = this.ele.nativeElement;
+    updateContainerStyle(name: string) {
+        const ele: HTMLElement = this.ele.nativeElement;
         const children = ele.children;
         let total = 0;
         for (const key in children) {
             const item: HTMLElement = children[key] as HTMLElement;
-            const size = item[name];
-            total += size;
+            if (typeof item === 'object') {
+                if ('getBoundingClientRect' in item) {
+                    const rect = item.getBoundingClientRect();
+                    total += parseInt(rect[name], 10);
+                }
+            }
         }
-        _.set(this.ele.nativeElement, 'style.' + val, total + 'px');
+        ele.parentElement.style.setProperty(`--total-${name}`, total + 'px');
     }
 
     updateChildrenStyle(width: string, val: string) {
@@ -231,11 +237,12 @@ export class BetterScrollDirective extends BaseWithIcss {
         const children = ele.children;
         for (const key in children) {
             const item: HTMLElement = children[key] as HTMLElement;
-            if (item.classList) {
-                this.render.addClass(item, 'slide-item');
+            if (typeof item === 'object') {
+                if ('getBoundingClientRect' in item) {
+                    this.render.addClass(item, 'slide-item');
+                    item.style.setProperty(`--${val}`, width);
+                }
             }
-            _.set(item, 'style.' + val, width);
         }
     }
 }
-
